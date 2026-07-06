@@ -97,9 +97,29 @@ export default function App() {
     setLiked(exists ? liked.filter((l) => l.titulo !== idea.titulo) : [...liked, idea]);
   }
 
+  function ideaAsText(i: Idea): string {
+    return `${i.emoji} ${i.titulo}\n${i.descricao}${i.dica ? `\n💡 ${i.dica}` : ""}`;
+  }
+
+  // No celular abre o menu nativo de compartilhamento (WhatsApp etc.)
+  const canShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
+
+  function shareIdea() {
+    if (!idea) return;
+    navigator
+      .share({
+        title: "Sem Ideia? 🎲",
+        text: `${ideaAsText(idea)}\n\n🎲 Sorteie a sua:`,
+        url: window.location.origin,
+      })
+      .catch(() => {
+        // usuário cancelou o compartilhamento — sem drama
+      });
+  }
+
   function copyIdea() {
     if (!idea) return;
-    const txt = `${idea.emoji} ${idea.titulo}\n${idea.descricao}${idea.dica ? `\n💡 ${idea.dica}` : ""}`;
+    const txt = ideaAsText(idea);
     navigator.clipboard
       .writeText(txt)
       .catch(() => {
@@ -215,9 +235,15 @@ export default function App() {
               <button className="btn-ghost flex-1 py-3" onClick={toggleLike}>
                 {isLiked ? "❤️ Curtida!" : "🤍 Gostei"}
               </button>
-              <button className="btn-ghost flex-1 py-3" onClick={copyIdea}>
-                {copied ? "✅ Copiado" : "📋 Copiar"}
-              </button>
+              {canShare ? (
+                <button className="btn-ghost flex-1 py-3" onClick={shareIdea}>
+                  📤 Enviar
+                </button>
+              ) : (
+                <button className="btn-ghost flex-1 py-3" onClick={copyIdea}>
+                  {copied ? "✅ Copiado" : "📋 Copiar"}
+                </button>
+              )}
               <button className="btn-ghost flex-1 py-3" onClick={() => setScreen("home")}>
                 ↩ Voltar
               </button>

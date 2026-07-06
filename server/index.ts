@@ -12,6 +12,8 @@ const PORT = Number(process.env.PORT ?? 3001);
 const MODEL = "claude-haiku-4-5-20251001";
 const MAX_TEXTO = 200;
 const MAX_HISTORICO = 8;
+// Teto global de ideias por dia (proteção de custo) — ajustável via env
+const DAILY_LIMIT = Number(process.env.DAILY_LIMIT ?? 500);
 
 const apiKey = process.env.ANTHROPIC_API_KEY;
 if (!apiKey) {
@@ -35,6 +37,21 @@ const ideaLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: "Calma aí! Máximo de 10 ideias por minuto. Respira e tenta já já. 😅" },
 });
+
+// Teto global diário (todas as pessoas somadas) — evita surpresa na fatura
+let dailyCount = 0;
+let dailyDate = new Date().toDateString();
+
+function checkDailyLimit(): boolean {
+  const today = new Date().toDateString();
+  if (today !== dailyDate) {
+    dailyDate = today;
+    dailyCount = 0;
+  }
+  if (dailyCount >= DAILY_LIMIT) return false;
+  dailyCount++;
+  return true;
+}
 
 interface ParsedInput {
   texto: string;
@@ -103,12 +120,37 @@ app.post("/api/idea", ideaLimiter, async (req, res) => {
     res.status(500).json({ error: "Servidor sem ANTHROPIC_API_KEY configurada." });
     return;
   }
+  if (!checkDailyLimit()) {
+    res.status(429).json({ error: "O dado cansou por hoje! 😴 Volta amanhã que tem mais ideia." });
+    return;
+  }
 
   try {
     const response = await anthropic.messages.create({
       model: MODEL,
       max_tokens: 1000,
       messages: [{ role: "user", content: buildPrompt(input.texto, input.historico) }],
+      // Structured outputs: a API garante JSON válido neste schema,
+      // eliminando a fragilidade de extrair JSON de texto livre.
+      output_config: {
+        format: {
+          type: "json_schema",
+          schema: {
+            type: "object",
+            properties: {
+              emoji: { type: "string", description: "um único emoji" },
+              titulo: { type: "string", description: "título curto, máx 6 palavras" },
+              descricao: { type: "string", description: "1 a 2 frases, tom divertido" },
+              categoria: { type: "string" },
+              custo: { type: "string", enum: [...CUSTOS] },
+              companhia: { type: "array", items: { type: "string" } },
+              dica: { type: "string", description: "dica extra curta e opcional" },
+            },
+            required: ["emoji", "titulo", "descricao", "categoria", "custo", "companhia"],
+            additionalProperties: false,
+          },
+        },
+      },
     });
 
     const text = response.content

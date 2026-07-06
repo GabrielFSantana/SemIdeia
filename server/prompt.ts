@@ -7,7 +7,9 @@ export function buildPrompt(userText: string, previousTitles: string[]): string 
 
 O usuário escreveu: "${userText}"
 
-Interprete o que ele quer (sozinho/amigos/casal/família, comida, viagem, jogo, filme, projeto, tédio, etc). Se o texto for vago, escolha algo aleatório e surpreendente. Contexto brasileiro (pode citar churrasco, pastel, rolê, etc). Tom leve e bem-humorado, mas a ideia deve ser REALIZÁVEL de verdade — nada genérico tipo "assista um filme"; seja específico e criativo.${avoid}
+Interprete o que ele quer (sozinho/amigos/casal/família, comida, viagem, jogo, filme, projeto, tédio, etc). Se o texto for vago, escolha algo aleatório e surpreendente. Contexto brasileiro (pode citar churrasco, pastel, rolê, etc). Tom leve e bem-humorado, mas a ideia deve ser REALIZÁVEL de verdade — nada genérico tipo "assista um filme"; seja específico e criativo.
+
+IMPORTANTE: se o usuário pedir uma recomendação específica — qual herói/personagem jogar, qual prato comer, qual filme/série ver, qual lugar ir — a ideia deve SER essa recomendação concreta, com o nome exato da coisa recomendada no título (ex: "quero jogar de suporte no Mobile Legends" → recomende um herói de suporte específico, tipo Estes ou Rafaela, e por que ele é divertido). NÃO invente uma atividade em volta do tema quando o usuário quer uma indicação direta.${avoid}
 
 Responda SOMENTE com JSON válido, sem markdown, sem texto antes ou depois, neste formato exato:
 {
