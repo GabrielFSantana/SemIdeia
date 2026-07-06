@@ -1,0 +1,14 @@
+# Dependências
+node_modules/
+
+# Segredos — a API key NUNCA vai para o repositório
+.env
+.env.local
+.env.*.local
+
+# Build
+dist/
+
+# Logs e artefatos
+*.log
+.DS_Store
