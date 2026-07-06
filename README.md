@@ -2,6 +2,8 @@
 
 Gerador de ideias com IA: você fala do que está sem ideia e o app sorteia uma sugestão divertida e realizável, gerada pelo Claude.
 
+Desenvolvido por **Gabriel Santana (Biu)** — [LinkedIn](https://www.linkedin.com/in/gabrielsbelarmino/) · [GitHub](https://github.com/GabrielFSantana)
+
 ## Stack
 
 - **Frontend:** React + TypeScript + Vite + Tailwind CSS

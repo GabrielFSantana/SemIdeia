@@ -119,7 +119,7 @@ export default function App() {
   const isLiked = idea !== null && liked.some((l) => l.titulo === idea.titulo);
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 app-bg">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 pb-16 app-bg">
       {/* ---------------- HOME ---------------- */}
       {screen === "home" && (
         <div className="w-full max-w-md text-center float-up">
@@ -262,6 +262,29 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* ---------------- RODAPÉ ---------------- */}
+      <footer className="fixed bottom-0 left-0 w-full text-center py-3 text-white text-sm" style={{ opacity: 0.75 }}>
+        Desenvolvido por <span className="font-semibold">Gabriel Santana (Biu)</span>
+        <span className="mx-2">·</span>
+        <a
+          className="underline hover:opacity-100"
+          href="https://www.linkedin.com/in/gabrielsbelarmino/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          LinkedIn
+        </a>
+        <span className="mx-2">·</span>
+        <a
+          className="underline hover:opacity-100"
+          href="https://github.com/GabrielFSantana"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub
+        </a>
+      </footer>
     </div>
   );
 }
